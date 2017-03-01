@@ -14,4 +14,8 @@ object RichHttpClient {
   def newSslClientService(sslHostname: String, dest: String): Service[Request, Response] = {
     Http.client.withTls(sslHostname).newService(dest)
   }
+
+  def newSslClientServiceWithoutValidation(dest: String): Service[Request, Response] = {
+    Http.client.withTlsWithoutValidation.newService(dest)
+  }
 }

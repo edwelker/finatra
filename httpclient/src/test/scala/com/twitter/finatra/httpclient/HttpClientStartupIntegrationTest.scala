@@ -29,4 +29,17 @@ class HttpClientStartupIntegrationTest extends WordSpecTest {
 
     injector.instance[HttpClient]
   }
+
+  "startup ssl no validation" in {
+    val injector = TestInjector(
+      modules = Seq(FinatraJacksonModule, new HttpClientModule {
+        override val dest = "flag!myservice"
+        override val sslHostname = Some("foo")
+        override val noTlsValidation = Some(true)
+      }),
+      flags = Map(
+        "com.twitter.server.resolverMap" -> "myservice=nil!"))
+
+    injector.instance[HttpClient]
+  }
 }

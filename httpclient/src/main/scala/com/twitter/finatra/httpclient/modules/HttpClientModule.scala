@@ -22,6 +22,8 @@ abstract class HttpClientModule extends TwitterModule {
 
   def sslHostname: Option[String] = None
 
+  def noTlsValidation: Option[Bool] = None
+
   @Singleton
   @Provides
   def provideHttpClient(
@@ -41,9 +43,16 @@ abstract class HttpClientModule extends TwitterModule {
   def provideHttpService: Service[Request, Response] = {
     sslHostname match {
       case Some(ssl) =>
-        RichHttpClient.newSslClientService(
-          sslHostname = ssl,
-          dest = dest)
+        noTlsValidation match {
+          case Some(_) =>
+            RichHttpClient.newSslClientServiceWithoutValidation(
+              dest = dest
+            )
+          case _ =>
+            RichHttpClient.newSslClientService(
+              sslHostname = ssl,
+              dest = dest)
+        }
       case _ =>
         RichHttpClient.newClientService(
           dest = dest)
